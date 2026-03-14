@@ -24,6 +24,17 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQubeServer') {
+            script {
+                def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                bat "\"${scannerHome}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
+            }
+        }
+    }
+}
+
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
