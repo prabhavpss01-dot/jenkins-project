@@ -27,7 +27,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    bat 'mvn sonar:sonar'
+                    bat 'sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests'
                 }
             }
         }
