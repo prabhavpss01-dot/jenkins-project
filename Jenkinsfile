@@ -27,11 +27,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    script {
-                        // Use the tool name you configured in Jenkins Global Tool Configuration
-                        def scannerHome = tool 'SonarScanner'
-                        bat "${scannerHome}\\bin\\sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
-                    }
+                    bat "sonar-scanner.bat -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
                 }
             }
         }
