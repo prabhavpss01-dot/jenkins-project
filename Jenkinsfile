@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()   // Webhook trigger
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/<your-username>/ci-cd-sonarqube-docker.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t ci-cd-sonarqube-docker .'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'docker run --rm ci-cd-sonarqube-docker pytest tests/test_app.py'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    bat 'mvn sonar:sonar'
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    bat 'docker login -u %USER% -p %PASS%'
+                    bat 'docker tag ci-cd-sonarqube-docker %USER%/ci-cd-sonarqube-docker:latest'
+                    bat 'docker push %USER%/ci-cd-sonarqube-docker:latest'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                bat 'docker run -d -p 5000:8080 ci-cd-sonarqube-docker'
+            }
+        }
+    }
+}
