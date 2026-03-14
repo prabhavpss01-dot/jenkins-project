@@ -26,13 +26,13 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                   withSonarQubeEnv('SonarQubeServer') {
-                     script {
-                        def scannerHome = tool 'SonarScanner'
-                        bat "${scannerHome}\\bin\\sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
-                            }
-                    }
+                withSonarQubeEnv('SonarQubeServer') {
+                    // Use the tool name you configured in Jenkins Global Tool Configuration
+                    def scannerHome = tool 'SonarScanner'
+                    bat "${scannerHome}\\bin\\sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
+                }
             }
+        }
     }
 
         stage('Push to DockerHub') {
