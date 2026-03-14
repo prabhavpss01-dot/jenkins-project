@@ -27,7 +27,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    bat "sonar-scanner.bat -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
+                    script {
+                        //def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                        //bat "\"${scannerHome}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
+                    }
                 }
             }
         }
