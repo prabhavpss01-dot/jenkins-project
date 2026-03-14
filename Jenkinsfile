@@ -26,11 +26,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQubeServer') {
-                    bat 'sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests'
-                }
+                   withSonarQubeEnv('SonarQubeServer') {
+                     script {
+                        def scannerHome = tool 'SonarScanner'
+                        bat "${scannerHome}\\bin\\sonar-scanner -Dsonar.projectKey=jenkins-project -Dsonar.sources=app -Dsonar.tests=tests"
+                            }
+                    }
             }
-        }
+    }
 
         stage('Push to DockerHub') {
             steps {
